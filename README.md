@@ -7,7 +7,7 @@ A diagnostic script for DreamPi that identifies setup issues and troubleshoots c
 Run the following command on your DreamPi to download the script:
 
 ```bash
-curl -sS https://raw.githubusercontent.com/jschwager/dpi-troubleshooter/main/troubleshoot.sh && chmod +x troubleshoot.sh
+wget https://raw.githubusercontent.com/jschwager/dpi-troubleshooter/main/troubleshoot.sh && chmod +x troubleshoot.sh
 ```
 
 Once the script has been downloaded, it can be initialized via the following command:
