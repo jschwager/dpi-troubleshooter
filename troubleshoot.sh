@@ -14,7 +14,7 @@ NORMAL=$(tput sgr0)
 
 # Function to check network connectivity
 check_network() {
-    echo -e "\n=== Network Connectivity Check ==="
+    echo -e "\n${BOLD}=== Network Connectivity Check ===${NORMAL}"
     if ping -c 1 google.com &> /dev/null; then
         echo -e "${GREEN}●${NC} Network is reachable"
     else
@@ -29,7 +29,7 @@ check_network() {
 
 # Function to check if DreamPi service exists
 check_service() {
-    echo -e "\n=== DreamPi Service Check ==="
+    echo -e "\n${BOLD}=== DreamPi Service Check ===${NORMAL}"
     if systemctl list-unit-files | grep -q dreampi; then
         echo -e "${GREEN}●${NC} dreampi service found"
         return 0
@@ -41,19 +41,19 @@ check_service() {
 
 # Function to get DreamPi service status
 get_status() {
-    echo -e "\n=== DreamPi Service Status ==="
+    echo -e "\n${BOLD}=== DreamPi Service Status ===${NORMAL}"
     systemctl status dreampi --no-pager --lines=0
 }
 
 # Function to analyze DreamPi logs
 analyze_logs() {
-    echo -e "\n=== Recent DreamPi Logs ==="
+    echo -e "\n${BOLD}=== Recent DreamPi Logs ==="
     journalctl -u dreampi -n 50 --no-pager
 }
 
 # Function to check for common errors
 check_errors() {
-    echo -e "\n=== Checking for Common Errors ==="
+    echo -e "\n${BOLD}=== Checking for Common Errors ===${NORMAL}"
     if journalctl -u dreampi | grep -qi "error\|failed\|denied"; then
         echo -e "${RED}●${NC} Errors found in logs:"
         journalctl -u dreampi | grep -i "error\|failed\|denied" | tail -10
@@ -64,7 +64,7 @@ check_errors() {
 
 # Function to check for modem errors
 check_modem_errors() {
-    echo -e "\n=== Checking for Modem Errors ==="
+    echo -e "\n${BOLD}=== Checking for Modem Errors ===${NORMAL}"
     if journalctl -u dreampi | grep -qi "could not open port /dev"; then
         echo -e "${RED}●${NC} Modem could not be detected."
         journalctl -u dreampi | grep -i "could not open port /dev" | tail -10
@@ -75,7 +75,7 @@ check_modem_errors() {
 
 # Function to check for dialing issues
 check_dialing_issues() {
-    echo -e "\n=== Checking for Dialing Issues ==="
+    echo -e "\n${BOLD}=== Checking for Dialing Issues ===${NORMAL}"
     if journalctl -u dreampi | grep -qi "Heard: [0-9][0-9][0-9][0-9][0-9][0-9][0-9]$"; then
         echo -e "${GREEN}●${NC} Detected dialing a 7-digit number. This indicates a correct dialing sequence."
         journalctl -u dreampi | grep -i "Heard: [0-9][0-9][0-9][0-9][0-9][0-9][0-9]$" | tail -4
