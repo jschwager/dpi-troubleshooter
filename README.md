@@ -1,6 +1,6 @@
 # DreamPi Troubleshooter
 
-A diagnostic script for DreamPi that identifies setup issues and troubleshoots connection problems.
+A diagnostic script for [DreamPi](https://github.com/Kazade/dreampi) that identifies setup issues and troubleshoots connection problems.
 
 ## Quick Start
 
