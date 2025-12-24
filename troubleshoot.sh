@@ -76,13 +76,14 @@ check_modem_errors() {
 # Function to check for dialing issues
 check_dialing_issues() {
     echo -e "\n=== Checking for Dialing Issues ==="
-    if journalctl -u dreampi | grep -qi "Heard: \d{7}$"; then
+    if journalctl -u dreampi | grep -qi "Heard: [0-9][0-9][0-9][0-9][0-9][0-9][0-9]$"; then
         echo -e "${GREEN}●${NC} Detected dialing a 7-digit number. This indicates a correct dialing sequence."
-        journalctl -u dreampi | grep -i "Heard: \d{7}$" | tail -4
-    elif journalctl -u dreampi | grep -qi "Heard: \d+"; then
+        journalctl -u dreampi | grep -i "Heard: [0-9][0-9][0-9][0-9][0-9][0-9][0-9]$" | tail -4
+    elif journalctl -u dreampi | grep -qi "Heard:"; then
         echo -e "${RED}●${NC} A dialing attempt was detected, however it was not a 7-digit number."
+        journalctl -u dreampi | grep -i "Heard:" | tail -4
     else
-        echo -e "${RED}●${NC} A dialing attempt was not detected."
+        echo -e "${RED}●${NC} A dialing attempt was not detected. Please try dialong again before running the troubleshooter."
     fi
 }
 
