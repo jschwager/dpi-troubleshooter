@@ -33,6 +33,7 @@ check_ip_conflict() {
     if ip addr show | grep -qE "[0-9]+.[0-9]+.[0-9]+.98"; then
         echo -e "${RED}●${NC} IP conflict detected: DreamPi is using the .98 address."
         echo "Please ensure no device on your network is using this IP."
+        ip addr show | grep -E "[0-9]+.[0-9]+.[0-9]+.98";
     else
         echo -e "${GREEN}●${NC} No IP conflict detected."
     fi
