@@ -1,8 +1,9 @@
 #!/bin/bash
 # Name: DreamPi Troubleshooter
-# Version: 0.9
 # Description: A script to troubleshoot DreamPi setup issues
 # Author: Jared Schwager
+
+VERSION="0.9.1"
 
 # Color codes
 GREEN='\033[0;32m'
@@ -90,7 +91,7 @@ echo "▗▄▄▄   ▄▄▄ ▗▞▀▚▖▗▞▀▜▌▄▄▄▄  ▗�
 echo "▐▌  █ █    ▐▛▀▀▘▝▚▄▟▌█ █ █ ▐▌ ▐▌▄ "
 echo "▐▌  █ █    ▝▚▄▄▖     █   █ ▐▛▀▘ █ "
 echo -e "▐▙▄▄▀                      ▐▌   █ ${BOLD}troubleshooter"
-echo -e "${NORMAL}v0.1 by Jared Schwager" 
+echo -e "${NORMAL}v${VERSION} by Jared Schwager" 
 
 check_network
 check_service
