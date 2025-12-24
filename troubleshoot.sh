@@ -51,17 +51,6 @@ analyze_logs() {
     journalctl -u dreampi -n 50 --no-pager
 }
 
-# Function to check for common errors
-check_errors() {
-    echo -e "\n${BOLD}=== Checking for Common Errors ===${NORMAL}"
-    if journalctl -u dreampi | grep -qi "error\|failed\|denied"; then
-        echo -e "${RED}●${NC} Errors found in logs:"
-        journalctl -u dreampi | grep -i "error\|failed\|denied" | tail -10
-    else
-        echo -e "${GREEN}●${NC} No common errors detected"
-    fi
-}
-
 # Function to check for modem errors
 check_modem_errors() {
     echo -e "\n${BOLD}=== Checking for Modem Errors ===${NORMAL}"
@@ -97,7 +86,6 @@ echo -e "${NORMAL}v${VERSION} by Jared Schwager"
 check_network
 check_service
 get_status
-check_errors
 check_modem_errors
 check_dialing_issues
 
