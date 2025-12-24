@@ -27,6 +27,17 @@ check_network() {
     fi
 }
 
+# Function to check for IP conflict (DreamPi is using .98 address)
+check_ip_conflict() {   
+    echo -e "\n${BOLD}=== IP Conflict Check ===${NORMAL}"
+    if ip addr show | grep -q "192.168.1.98"; then
+        echo -e "${RED}●${NC} IP conflict detected: DreamPi is using the .98 address."
+        echo "Please ensure no device on your network is using this IP."
+    else
+        echo -e "${GREEN}●${NC} No IP conflict detected."
+    fi
+}
+
 # Function to check if DreamPi service exists
 check_service() {
     echo -e "\n${BOLD}=== DreamPi Service Check ===${NORMAL}"
@@ -84,6 +95,7 @@ echo -e "▐▙▄▄▀                      ▐▌   █ ${BOLD}troubleshooter
 echo -e "${NORMAL}v${VERSION} by Jared Schwager" 
 
 check_network
+check_ip_conflict
 check_service
 get_status
 check_modem_errors
