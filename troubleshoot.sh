@@ -30,7 +30,7 @@ check_network() {
 # Function to check for IP conflict (DreamPi is using .98 address)
 check_ip_conflict() {   
     echo -e "\n${BOLD}=== IP Conflict Check ===${NORMAL}"
-    if ip addr show | grep "inet" | grep ".98/"; then
+    if ip addr show | grep "inet" | grep -q ".98/"; then
         echo -e "${RED}●${NC} IP conflict detected: DreamPi is using the .98 address."
         echo "Please ensure no device on your network is using this IP."
     else
@@ -83,7 +83,7 @@ check_dialing_issues() {
         echo -e "${RED}●${NC} A dialing attempt was detected, however it was not a 7-digit number."
         journalctl -u dreampi | grep -i "Heard:" | tail -4
     else
-        echo -e "${RED}●${NC} A dialing attempt was not detected. Please try dialong again before running the troubleshooter."
+        echo -e "${RED}●${NC} A dialing attempt was not detected. Please try dialing again before running the troubleshooter."
     fi
 }
 
