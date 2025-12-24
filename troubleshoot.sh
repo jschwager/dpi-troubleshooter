@@ -51,6 +51,16 @@ check_service() {
     fi
 }
 
+# Function to check VPN tunnel status
+check_vpn_tunnel() {
+    echo -e "\n${BOLD}=== VPN Tunnel Check ===${NORMAL}"
+    if ip addr show | grep -q "tun0" && ping -I tun0 -c 3 10.202.0.1 &> /dev/null; then
+        echo -e "${GREEN}●${NC} VPN tunnel is active"
+    else
+        echo -e "${RED}●${NC} VPN tunnel is not active"
+    fi
+}
+
 # Function to get DreamPi service status
 get_status() {
     echo -e "\n${BOLD}=== DreamPi Service Status ===${NORMAL}"
@@ -97,6 +107,7 @@ echo -e "${NORMAL}v${VERSION} by Jared Schwager"
 
 check_network
 check_ip_conflict
+check_vpn_tunnel
 check_service
 get_status
 check_modem_errors
