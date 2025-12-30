@@ -3,7 +3,7 @@
 # Description: A script to troubleshoot DreamPi setup issues
 # Author: Jared Schwager
 
-version="1.0"
+version="1.1"
 
 # Color codes
 green='\033[0;32m'
