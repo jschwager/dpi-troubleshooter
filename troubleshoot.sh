@@ -30,10 +30,10 @@ check_network() {
 # Function to check for IP conflict (DreamPi is using .98 address)
 check_ip_conflict() {   
     echo -e "\n${BOLD}=== IP Conflict Check ===${NORMAL}"
-    if ip addr show | grep -qE "[0-9]+.[0-9]+.[0-9]+.98"; then
+    if ip addr show | grep -qE "[0-9]+.[0-9]+.[0-9]+.98" | grep -v "/32"; then
         echo -e "${RED}●${NC} IP conflict detected: DreamPi is using the .98 address."
         echo "Please ensure no device on your network is using this IP."
-        ip addr show | grep -E "[0-9]+.[0-9]+.[0-9]+.98";
+        ip addr show | grep -E "[0-9]+.[0-9]+.[0-9]+.98" | grep -v "/32";
     else
         echo -e "${GREEN}●${NC} No IP conflict detected."
     fi
