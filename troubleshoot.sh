@@ -54,8 +54,9 @@ check_service() {
 # Function to check VPN tunnel status
 check_vpn_tunnel() {
     echo -e "\n${BOLD}=== VPN Tunnel Check ===${NORMAL}"
-    if ip addr show | grep -q "tun0" && ping -I tun0 -c 3 10.202.0.1 &> /dev/null; then
-        echo -e "${GREEN}●${NC} VPN tunnel is active"
+    gateway_ip=$(ip route | grep "tun0" | grep -oE "[0-9]+.[0-9]+.[0-9]+.1" | head -n 1)
+    if ip addr show | grep -q "tun0" && ping -I tun0 -c 1 $gateway_ip &> /dev/null; then
+        echo -e "${GREEN}●${NC} VPN tunnel is active, connected to gateway $gateway_ip"
     else
         echo -e "${RED}●${NC} VPN tunnel is not active"
     fi
