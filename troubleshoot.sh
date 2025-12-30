@@ -26,9 +26,9 @@ declare -A dreampi_versions=(
 get_dreampi_version() {
    echo -e "\n${bold}=== DreamPi Version Check ===${normal}"
     if [[ -n "${dreampi_versions[$dreampi_version_string]}" ]]; then
-        echo "${green}●${nc} Detected DreamPi version: ${dreampi_versions[$dreampi_version_string]}"
+        echo -e "${green}●${nc} Detected DreamPi version: ${dreampi_versions[$dreampi_version_string]}"
     else
-        echo "${red}●${nc} Unknown version"
+        echo -e "${red}●${nc} Unknown version"
     fi
 }
 
