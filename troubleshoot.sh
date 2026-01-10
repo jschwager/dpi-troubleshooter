@@ -3,7 +3,7 @@
 # Description: A script to troubleshoot DreamPi setup issues
 # Author: Jared Schwager
 
-version="1.1"
+version="1.2"
 
 # Color codes
 green='\033[0;32m'
@@ -119,6 +119,43 @@ check_dialing_issues() {
     fi
 }
 
+# Function to check DCnow profile configuration
+check_dcnow_profile() {
+    echo -e "\n${bold}=== Dreamcast Now! Profile Configuration Check ===${normal}"
+    mac_hash=$(python2 -c "from uuid import getnode;from hashlib import sha256;mac_int=getnode();mac_str=':'.join(('%012X'%mac_int)[i:i+2]for i in range(0,12,2));print sha256(mac_str.encode('utf-8')).hexdigest()")
+    config_url="http://dreamcast.online/now/configure/$mac_hash/"
+    retrieved_config=$(curl -s -c cookies.txt -s $config_url)
+    username=$(echo $retrieved_config | grep -oP 'name="username" value="\K[^"]+')
+    email_hash=$(echo $retrieved_config | grep -oP 'name="email_hash" value="\K[^"]+')
+    csrfmiddlewaretoken=$(echo $retrieved_config | grep -oP 'name="csrfmiddlewaretoken" value="\K[^"]+')
+    if [[ -n $username ]]; then
+        echo -e "${green}●${nc} Your Dreamcast Now! profile is already configured."
+        echo "Username: $username"
+        read -p "Would you like to update your profile? (y/n) " -n 1 -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            read -p $'\x0aEnter desired username: ' new_username
+            read -p "Enter Gravatar email: " new_email
+            new_email_hash=$(echo -n "$new_email" | md5sum | awk '{print $1}')
+            post_data="csrfmiddlewaretoken=$csrfmiddlewaretoken&username=$new_username&email_hash=$new_email_hash"
+            curl -s -b cookies.txt -d "$post_data" -X POST $config_url > /dev/null
+            echo -e "${green}●${nc} Profile configured with username: $new_username"
+        fi
+    else
+        echo -e "${red}●${nc} Your Dreamcast Now! profile is not configured."
+        read -p "Would you like to configure it now? (y/n) " -n 1 -r
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            read -p $'\x0aEnter desired username: ' new_username
+            read -p $"Enter Gravatar email: " new_email
+            new_email_hash=$(echo -n "$new_email" | md5sum | awk '{print $1}')
+            post_data="csrfmiddlewaretoken=$csrfmiddlewaretoken&username=$new_username&email_hash=$new_email_hash"
+            curl -s -b cookies.txt -d "$post_data" -X POST $config_url > /dev/null
+            echo -e "${green}●${nc} Profile configured with username: $new_username"
+        fi
+
+    fi
+    rm -f cookies.txt
+}
+
 # Main execution
 echo "▗▄▄▄   ▄▄▄ ▗▞▀▚▖▗▞▀▜▌▄▄▄▄  ▗▄▄▖ ▄ "
 echo "▐▌  █ █    ▐▛▀▀▘▝▚▄▟▌█ █ █ ▐▌ ▐▌▄ "
@@ -134,10 +171,11 @@ check_service
 get_status
 check_modem_errors
 check_dialing_issues
+check_dcnow_profile
 
-echo -e "\nTroubleshooting complete.\n"
-read -p "Would you like to see recent logs? (y/n) " -n 1 -r
+read -p $'\x0a\x0aWould you like to see recent logs? (y/n) ' -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     analyze_logs
 fi
+echo -e "\n${bold}Troubleshooting is complete. Thank you for using DreamPi Troubleshooter.${normal}"
