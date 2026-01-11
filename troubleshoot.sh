@@ -15,6 +15,13 @@ normal=$(tput sgr0)
 # Get DreamPi version from dreampi.py
 dreampi_version_string=$(grep "dreampi.py_version" ~/dreampi/dreampi.py | grep -oE "[0-9]+$")
 
+# Check for DCNET version of DreamPi
+if grep -q "dcnet" ~/dreampi/dreampi.py; then
+    dcnet_enabled=1
+else
+    dcnet_enabled=0
+fi
+
 # Array of DreamPi date strings to version numbers
 declare -A dreampi_versions=(
     ["202512152004"]="2.0"
@@ -25,8 +32,10 @@ declare -A dreampi_versions=(
 # Function to get DreamPi version
 get_dreampi_version() {
    echo -e "\n${bold}=== DreamPi Version Check ===${normal}"
-    if [[ -n "${dreampi_versions[$dreampi_version_string]}" ]]; then
+    if [[ -n "$dreampi_version_string" ]] && [[ -n "${dreampi_versions[$dreampi_version_string]}" ]]; then
         echo -e "${green}●${nc} Detected DreamPi version: ${dreampi_versions[$dreampi_version_string]}"
+    elif [[ $dcnet_enabled -eq 1 ]]; then
+        echo -e "${green}●${nc} Detected DCNET version of DreamPi"
     else
         echo -e "${red}●${nc} Unknown version"
     fi
@@ -166,7 +175,9 @@ echo -e "${normal}v${version} by Jared Schwager"
 get_dreampi_version
 check_network
 check_ip_conflict
-check_vpn_tunnel
+if [[ $dcnet_enabled -eq 0 ]]; then
+    check_vpn_tunnel
+fi
 check_service
 get_status
 check_modem_errors
