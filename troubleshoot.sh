@@ -184,10 +184,11 @@ check_modem_errors
 check_dialing_issues
 
 ## Prompt user for additional actions
+echo -e "\n${bold}=== Additional Options ===${normal}"
 echo "(1) Review recent logs"
 echo "(2) Configure Dreamcast Now profile"
 echo "(3) Exit"
-read -p $'\x0a\x0aPlease select an option above: ' -n 1 -r
+read -p $'\x0aPlease select an option above: ' -n 1 -r
 echo
 if [[ $REPLY =~ ^[1]$ ]]; then
     analyze_logs
