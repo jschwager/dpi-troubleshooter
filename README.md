@@ -25,6 +25,7 @@ This script performs comprehensive diagnostics on your DreamPi installation, inc
 - Network diagnostics
 - Service status checks
 - Log analysis
+- Dreamcast Now profile check/configuration
 
 ## Requirements
 
