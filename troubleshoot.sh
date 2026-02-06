@@ -3,7 +3,7 @@
 # Description: A script to troubleshoot DreamPi setup issues
 # Author: Jared Schwager
 
-version="1.2"
+version="1.2.1"
 
 # Color codes
 green='\033[0;32m'
@@ -182,11 +182,16 @@ check_service
 get_status
 check_modem_errors
 check_dialing_issues
-check_dcnow_profile
 
-read -p $'\x0a\x0aWould you like to see recent logs? (y/n) ' -n 1 -r
+## Prompt user for additional actions
+echo "(1) Review recent logs"
+echo "(2) Configure Dreamcast Now profile"
+echo "(3) Exit"
+read -p $'\x0a\x0aPlease select an option above: ' -n 1 -r
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+if [[ $REPLY =~ ^[1]$ ]]; then
     analyze_logs
+elif [[ $REPLY =~ ^[2]$ ]]; then
+    check_dcnow_profile
 fi
 echo -e "\n${bold}Troubleshooting is complete. Thank you for using DreamPi Troubleshooter.${normal}"
