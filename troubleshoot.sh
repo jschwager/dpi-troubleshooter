@@ -3,7 +3,7 @@
 # Description: A script to troubleshoot DreamPi setup issues
 # Author: Jared Schwager
 
-version="1.2.1"
+version="1.3"
 
 # Color codes
 green='\033[0;32m'
@@ -65,6 +65,20 @@ check_ip_conflict() {
         ip addr show | grep -E "[0-9]+.[0-9]+.[0-9]+.98" | grep -v "/32";
     else
         echo -e "${green}●${nc} No IP conflict detected."
+    fi
+}
+
+# Function to check for DNS resolution issues
+check_dns_resolution() {
+    echo -e "\n${bold}=== DNS Resolution Check ===${normal}"
+    domain_check=$(dig sega.com +short 2>&1)
+    expected_ip="192.185.5.88"
+    if [[ "$domain_check" == "$expected_ip" ]]; then
+        echo -e "${green}●${nc} DNS resolution is working"
+    else
+        echo -e "${red}●${nc} DNS resolution is not working"
+        echo "Expected sega.com to resolve to $expected_ip but got:"
+        echo "$domain_check"
     fi
 }
 
@@ -175,6 +189,7 @@ echo -e "${normal}v${version} by Jared Schwager"
 get_dreampi_version
 check_network
 check_ip_conflict
+check_dns_resolution
 if [[ $dcnet_enabled -eq 0 ]]; then
     check_vpn_tunnel
 fi
