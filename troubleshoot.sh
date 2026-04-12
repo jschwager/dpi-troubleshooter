@@ -71,8 +71,8 @@ check_ip_conflict() {
 # Function to check for DNS resolution issues
 check_dns_resolution() {
     echo -e "\n${bold}=== DNS Resolution Check ===${normal}"
-    domain_check=$(dig sega.com +short 2>&1)
-    expected_ip="192.185.5.88"
+    local domain_check=$(dig sega.com +short 2>&1)
+    local expected_ip="192.185.5.88"
     if [[ "$domain_check" == "$expected_ip" ]]; then
         echo -e "${green}●${nc} DNS resolution is working"
     else
@@ -97,7 +97,7 @@ check_service() {
 # Function to check VPN tunnel status
 check_vpn_tunnel() {
     echo -e "\n${bold}=== VPN Tunnel Check ===${normal}"
-    gateway_ip=$(ip route | grep "tun0" | grep -oE "[0-9]+.[0-9]+.[0-9]+\.1" | head -n 1)
+    local gateway_ip=$(ip route | grep "tun0" | grep -oE "[0-9]+.[0-9]+.[0-9]+\.1" | head -n 1)
     if ip addr show | grep -q "tun0" && ping -I tun0 -c 1 $gateway_ip &> /dev/null; then
         echo -e "${green}●${nc} VPN tunnel is active, connected to gateway $gateway_ip"
     else
@@ -145,12 +145,12 @@ check_dialing_issues() {
 # Function to check DCnow profile configuration
 check_dcnow_profile() {
     echo -e "\n${bold}=== Dreamcast Now! Profile Configuration Check ===${normal}"
-    mac_hash=$(python2 -c "from uuid import getnode;from hashlib import sha256;mac_int=getnode();mac_str=':'.join(('%012X'%mac_int)[i:i+2]for i in range(0,12,2));print sha256(mac_str.encode('utf-8')).hexdigest()")
-    config_url="http://dreamcast.online/now/configure/$mac_hash/"
-    retrieved_config=$(curl -s -c cookies.txt -s $config_url)
-    username=$(echo $retrieved_config | grep -oP 'name="username" value="\K[^"]+')
-    email_hash=$(echo $retrieved_config | grep -oP 'name="email_hash" value="\K[^"]+')
-    csrfmiddlewaretoken=$(echo $retrieved_config | grep -oP 'name="csrfmiddlewaretoken" value="\K[^"]+')
+    local mac_hash=$(python2 -c "from uuid import getnode;from hashlib import sha256;mac_int=getnode();mac_str=':'.join(('%012X'%mac_int)[i:i+2]for i in range(0,12,2));print sha256(mac_str.encode('utf-8')).hexdigest()")
+    local config_url="http://dreamcast.online/now/configure/$mac_hash/"
+    local retrieved_config=$(curl -s -c cookies.txt -s $config_url)
+    local username=$(echo $retrieved_config | grep -oP 'name="username" value="\K[^"]+')
+    local email_hash=$(echo $retrieved_config | grep -oP 'name="email_hash" value="\K[^"]+')
+    local csrfmiddlewaretoken=$(echo $retrieved_config | grep -oP 'name="csrfmiddlewaretoken" value="\K[^"]+')
     if [[ -n $username ]]; then
         echo -e "${green}●${nc} Your Dreamcast Now! profile is already configured."
         echo "Username: $username"
@@ -169,8 +169,8 @@ check_dcnow_profile() {
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             read -p $'\x0aEnter desired username: ' new_username
             read -p $"Enter Gravatar email: " new_email
-            new_email_hash=$(echo -n "$new_email" | md5sum | awk '{print $1}')
-            post_data="csrfmiddlewaretoken=$csrfmiddlewaretoken&username=$new_username&email_hash=$new_email_hash"
+            local new_email_hash=$(echo -n "$new_email" | md5sum | awk '{print $1}')
+            local post_data="csrfmiddlewaretoken=$csrfmiddlewaretoken&username=$new_username&email_hash=$new_email_hash"
             curl -s -b cookies.txt -d "$post_data" -X POST $config_url > /dev/null
             echo -e "${green}●${nc} Profile configured with username: $new_username"
         fi
