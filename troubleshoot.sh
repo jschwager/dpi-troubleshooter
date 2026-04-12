@@ -12,6 +12,58 @@ nc='\033[0m' # No Color
 bold=$(tput bold)
 normal=$(tput sgr0)
 
+# Function to check for script updates
+check_for_script_update() {
+    echo -e "\n${bold}=== Script Update Check ===${normal}"
+
+    local api_url="https://api.github.com/repos/jschwager/dpi-troubleshooter/releases/latest"
+    local latest_version
+    local current_version
+    local remote_script_url
+
+    # Pull tag_name from the GitHub releases API
+    latest_version=$(curl -fsSL "$api_url" | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+
+    if [[ -z "$latest_version" ]]; then
+        echo -e "${red}●${nc} Could not determine the latest release version."
+        return
+    fi
+
+    # Normalize versions like v1.2.1 -> 1.2.1
+    latest_version="${latest_version#v}"
+    current_version="${version#v}"
+
+    if [[ "$latest_version" == "$current_version" ]]; then
+        echo -e "${green}●${nc} You are running the latest version of the troubleshooter (${current_version})."
+        return
+    fi
+
+    # If latest_version sorts after current_version, an update is available
+    if [[ "$(printf '%s\n%s\n' "$current_version" "$latest_version" | sort -V | tail -n1)" == "$latest_version" ]]; then
+        echo -e "${red}●${nc} A newer version is available: ${latest_version} (current: ${current_version})"
+        read -p "Would you like to update this script now? (y/n) " -n 1 -r
+        echo
+
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            remote_script_url="https://raw.githubusercontent.com/jschwager/dpi-troubleshooter/main/troubleshoot.sh"
+            tmp_file=$(mktemp)
+
+            if curl -fsSL "$remote_script_url" -o "$tmp_file"; then
+                chmod +x "$tmp_file"
+                cp "$tmp_file" "$0"
+                rm -f "$tmp_file"
+                echo -e "${green}●${nc} Script updated successfully. Please run it again."
+                exit 0
+            else
+                rm -f "$tmp_file"
+                echo -e "${red}●${nc} Update failed."
+            fi
+        fi
+    else
+        echo -e "${green}●${nc} Local script version (${current_version}) is newer than the latest published release (${latest_version})."
+    fi
+}
+
 # Function to get DreamPi version
 get_dreampi_version() {
     echo -e "\n${bold}=== DreamPi Version Check ===${normal}"
@@ -183,6 +235,8 @@ echo "▐▌  █ █    ▐▛▀▀▘▝▚▄▟▌█ █ █ ▐▌ ▐▌
 echo "▐▌  █ █    ▝▚▄▄▖     █   █ ▐▛▀▘ █ "
 echo -e "▐▙▄▄▀                      ▐▌   █ ${bold}troubleshooter"
 echo -e "${normal}v${version} by Jared Schwager" 
+
+check_for_script_update
 
 get_dreampi_version
 check_network
