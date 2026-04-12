@@ -12,26 +12,24 @@ nc='\033[0m' # No Color
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-# Get DreamPi version from dreampi.py
-dreampi_version_string=$(grep "dreampi.py_version" ~/dreampi/dreampi.py | grep -oE "[0-9]+$")
-
-# Check for DCNET version of DreamPi
-if grep -q "dcnet" ~/dreampi/dreampi.py; then
-    dcnet_enabled=1
-else
-    dcnet_enabled=0
-fi
-
-# Array of DreamPi date strings to version numbers
-declare -A dreampi_versions=(
-    ["202512152004"]="2.0"
-    ["202402202004"]="1.9"
-    ["202305142148"]="1.8"
-)
-
 # Function to get DreamPi version
 get_dreampi_version() {
-   echo -e "\n${bold}=== DreamPi Version Check ===${normal}"
+    echo -e "\n${bold}=== DreamPi Version Check ===${normal}"
+    # Array of DreamPi date strings to version numbers
+    declare -A dreampi_versions=(
+        ["202512152004"]="2.0"
+        ["202402202004"]="1.9"
+        ["202305142148"]="1.8"
+    )
+    # Get DreamPi version from dreampi.py
+    local dreampi_version_string=$(grep "dreampi.py_version" ~/dreampi/dreampi.py | grep -oE "[0-9]+$")
+    # Check for DCNET version of DreamPi
+    local dcnet_enabled=0
+    if grep -q "dcnet" ~/dreampi/dreampi.py; then
+        local dcnet_enabled=1
+    else
+        local dcnet_enabled=0
+    fi
     if [[ -n "$dreampi_version_string" ]] && [[ -n "${dreampi_versions[$dreampi_version_string]}" ]]; then
         echo -e "${green}●${nc} Detected DreamPi version: ${dreampi_versions[$dreampi_version_string]}"
     elif [[ $dcnet_enabled -eq 1 ]]; then
