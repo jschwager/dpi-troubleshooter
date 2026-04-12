@@ -170,9 +170,10 @@ analyze_logs() {
 # Function to check for modem errors
 check_modem_errors() {
     echo -e "\n${bold}=== Checking for Modem Errors ===${normal}"
-    if journalctl -u dreampi | grep -qi "could not open port /dev"; then
-        echo -e "${red}●${nc} Modem could not be detected."
-        journalctl -u dreampi | grep -i "could not open port /dev" | tail -10
+    local last_modem_log=$(journalctl -u dreampi | grep 'SerialException: \[Errno 2\] could not open port /dev\|Opening serial interface to /dev' | tail -n 1)
+    if echo "$last_modem_log" | grep -qi "could not open port /dev"; then
+        echo -e "${red}●${nc} Modem error detected."
+        echo "$last_modem_log"
     else
         echo -e "${green}●${nc} No modem related errors detected"
     fi
