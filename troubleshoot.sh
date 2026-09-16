@@ -69,6 +69,7 @@ get_dreampi_version() {
     echo -e "\n${bold}=== DreamPi Version Check ===${normal}"
     # Array of DreamPi date strings to version numbers
     declare -A dreampi_versions=(
+        ["202608171113"]="2.1"
         ["202512152004"]="2.0"
         ["202402202004"]="1.9"
         ["202305142148"]="1.8"
